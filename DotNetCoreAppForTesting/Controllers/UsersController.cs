@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DotNetCoreAppForTesting.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DotNetCoreAppForTesting.Controllers
 {
@@ -16,13 +17,13 @@ namespace DotNetCoreAppForTesting.Controllers
             _context = context;
         }
 
-        // GET: Users
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Users.ToListAsync());
         }
 
-        // GET: Users/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -40,7 +41,7 @@ namespace DotNetCoreAppForTesting.Controllers
             return View(user);
         }
 
-        // GET: Users/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -51,6 +52,7 @@ namespace DotNetCoreAppForTesting.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Name,Email,Age,Birthday,Enabled")] User user)
         {
             if (ModelState.IsValid)
@@ -63,7 +65,7 @@ namespace DotNetCoreAppForTesting.Controllers
             return View(user);
         }
 
-        // GET: Users/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -84,6 +86,7 @@ namespace DotNetCoreAppForTesting.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Email,Age,Birthday,Enabled")] User user)
         {
             if (id != user.Id)
@@ -114,7 +117,7 @@ namespace DotNetCoreAppForTesting.Controllers
             return View(user);
         }
 
-        // GET: Users/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -132,7 +135,7 @@ namespace DotNetCoreAppForTesting.Controllers
             return View(user);
         }
 
-        // POST: Users/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)

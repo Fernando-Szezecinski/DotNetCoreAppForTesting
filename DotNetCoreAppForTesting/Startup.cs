@@ -7,6 +7,7 @@ using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Identity;
 
 namespace DotNetCoreAppForTesting
 {
@@ -26,6 +27,27 @@ namespace DotNetCoreAppForTesting
                     .ServerVersion(new Version(8, 0, 18), ServerType.MySql)
             ));
 
+            services.AddIdentity<IdentityUser, IdentityRole>(o=> {
+                o.Password.RequiredLength = 1;
+                o.Password.RequiredLength = 1;
+                o.Password.RequiredUniqueChars = 0;
+                o.Password.RequireLowercase = false;
+                o.Password.RequireNonAlphanumeric = false;
+                o.Password.RequireUppercase = false;
+                o.Password.RequireDigit = false;
+            })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.ConfigureApplicationCookie(o=>{
+                o.ExpireTimeSpan = TimeSpan.FromMinutes(3);
+                o.LoginPath = "/Account/Login";
+                o.LogoutPath = "/Account/Logout";
+                o.AccessDeniedPath = "/Account/AccessDenied";
+                o.LoginPath = "/home/login";    
+            });
+
+
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseInMemoryDatabase("db"));
 
             services.AddControllersWithViews();
@@ -41,17 +63,20 @@ namespace DotNetCoreAppForTesting
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-            app.UseStaticFiles();
+            //app.UseStaticFiles();
 
+           
             app.UseRouting();
 
+            //Who are you?
+            app.UseAuthentication();
+
+            //Are you allowed?
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }
